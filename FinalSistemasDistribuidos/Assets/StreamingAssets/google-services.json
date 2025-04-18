@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "685815799966",
+    "firebase_url": "https://finalsisdistribuidos-default-rtdb.firebaseio.com",
+    "project_id": "finalsisdistribuidos",
+    "storage_bucket": "finalsisdistribuidos.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685815799966:android:cfa435cb2a3c35377d5b8f",
+        "android_client_info": {
+          "package_name": "com.company.lostilines"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQLG9tlH6DSPJTSvyPWKJHBmomRMMcUew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:685815799966:android:d9af7fe32059fc907d5b8f",
+        "android_client_info": {
+          "package_name": "com.company.niggs"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQLG9tlH6DSPJTSvyPWKJHBmomRMMcUew"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
