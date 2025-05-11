@@ -30,6 +30,8 @@ public class ButtonLogin : MonoBehaviour
         string email = emailInput.text;
         string password = passwordInput.text;
 
+        // TODO: Verificar que en todos los input fields haya algo
+
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
             if (task.IsCanceled)
             {
