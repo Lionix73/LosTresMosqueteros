@@ -1,9 +1,6 @@
 using Firebase.Auth;
 using Firebase.Database;
-using System;
-using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.Rendering.GPUSort;
 
 public class UsersOnline : MonoBehaviour
 {
@@ -25,8 +22,8 @@ public class UsersOnline : MonoBehaviour
 
         DataSnapshot snapshot = args.Snapshot;
         Debug.Log(snapshot.Value + " se ha conectado");
-
     }
+
     private void HandleChildRemoved(object sender, ChildChangedEventArgs args)
     {
         if (args.DatabaseError != null)
@@ -39,6 +36,15 @@ public class UsersOnline : MonoBehaviour
         DataSnapshot snapshot = args.Snapshot;
 
         Debug.Log(snapshot.Value + " se ha desconectado");
+    }
 
+    private void OnApplicationQuit()
+    {
+        if(FirebaseAuth.DefaultInstance.CurrentUser != null)
+        {
+            var mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
+            var userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+            mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(null);
+        }
     }
 }

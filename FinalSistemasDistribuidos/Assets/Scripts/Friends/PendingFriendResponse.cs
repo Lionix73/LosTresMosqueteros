@@ -8,6 +8,8 @@ public class PendingFriendResponse : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        if (FirebaseAuth.DefaultInstance.CurrentUser == null) return;
+
         var mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
         var userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
 
@@ -52,7 +54,7 @@ public class PendingFriendResponse : MonoBehaviour
         {
 
             Debug.Log(friendUsermane + " ha aceptado tu solicitud");
-            mDatabaseRef.Child("users").Child(userId).Child("friends").Child(friendId).SetValueAsync(friendUsermane);
+            await mDatabaseRef.Child("users").Child(userId).Child("friends").Child(friendId).SetValueAsync(friendUsermane);
         }
         //Estado 2 para solicitud rechazada
         if (estado == 2)
