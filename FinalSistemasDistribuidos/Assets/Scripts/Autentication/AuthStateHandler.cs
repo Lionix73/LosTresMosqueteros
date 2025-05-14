@@ -7,20 +7,24 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class AuthStateHandler : MonoBehaviour
 {
-    [SerializeField] GameObject panelAuth;
-    [SerializeField] GameObject panelScore;
+    [SerializeField] GameObject panelLogin;
+    [SerializeField] GameObject panelLobby;
+    [SerializeField] Transform spawnPoint;
+    private CharacterLibrary characterLibrary;
 
     private void Reset()
     {
-        panelAuth = GameObject.Find("PanelAuth");    
-        panelScore = GameObject.Find("PanelScore");  
+        panelLogin = GameObject.Find("LogIn");    
+        panelLobby = GameObject.Find("Lobby");  
     }
 
     void Start()
     {
+        characterLibrary = GetComponent<CharacterLibrary>();
+
         FirebaseAuth.DefaultInstance.StateChanged += HandleStateChange;
 
-        panelScore.SetActive(false);
+        panelLobby.SetActive(false);
     }
 
     private void HandleStateChange(object sender, EventArgs e)
@@ -32,22 +36,22 @@ public class AuthStateHandler : MonoBehaviour
         }
         else
         {
-            panelAuth.SetActive(true);
-            panelScore.SetActive(false);
+            panelLogin.SetActive(true);
+            panelLobby.SetActive(false);
         }
     }
 
     private void SetAuth()
     {
-        panelAuth.SetActive(false);
-        panelScore.SetActive(true);
+        panelLogin.SetActive(false);
+        panelLobby.SetActive(true);
         Debug.Log($"{FirebaseAuth.DefaultInstance.CurrentUser.Email}");
     }
 
     private void SetUserOnline()
     {
         var mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
-        var userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+        string userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
 
         FirebaseDatabase.DefaultInstance
           .GetReference("users/" + userId + "/username")
@@ -59,12 +63,30 @@ public class AuthStateHandler : MonoBehaviour
                 }
                 else if (task.IsCompleted)
                 {
-                DataSnapshot snapshot = task.Result;
-                string username = snapshot.Value.ToString();
-                PlayerPrefs.SetString("username", username);
-                mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(username);
+                    DataSnapshot snapshot = task.Result;
+                    string username = snapshot.Value.ToString();
+                    PlayerPrefs.SetString("username", username);
+                    mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(username);
+
+                    GetCharacterModel(userId);
                 }
           });
 
+    }
+
+    private void GetCharacterModel(string userID)
+    {
+        FirebaseDatabase.DefaultInstance.RootReference
+        .Child("users")
+        .Child(userID)
+        .GetValueAsync().ContinueWithOnMainThread(task => {
+            if (task.IsCompleted)
+            {
+                DataSnapshot snapshot = task.Result;
+                string characterId = snapshot.Child("characterId").Value.ToString();
+                GameObject characterPrefab = characterLibrary.GetCharacterPrefab(characterId);
+                Instantiate(characterPrefab, spawnPoint.position, Quaternion.identity);
+            }
+        });
     }
 }

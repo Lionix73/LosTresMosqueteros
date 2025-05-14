@@ -42,6 +42,7 @@ public class ButtonRegister : MonoBehaviour
         {
             AuthResult result = registerTask.Result;
             FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("username").SetValueAsync(username);
+            FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("characterId").SetValueAsync("npc");
 
             Debug.Log($"usuario creado: {result.User.DisplayName}, {result.User.UserId}");
         }
