@@ -44,7 +44,9 @@ public class UsersOnline : MonoBehaviour
         {
             var mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
             var userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
-            mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(null);
+            
+            // comentado con fines de test
+            //mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(null);
         }
     }
 }

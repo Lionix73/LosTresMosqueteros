@@ -14,9 +14,6 @@ public class ButtonLogin : MonoBehaviour
     private void Reset()
     {
         loginButton = GetComponent<Button>();
-
-        emailInput = GameObject.Find("InputFieldMail").GetComponent<TMP_InputField>();
-        passwordInput = GameObject.Find("InputFieldPassword").GetComponent<TMP_InputField>();
     }
 
     private void Start()
@@ -47,6 +44,9 @@ public class ButtonLogin : MonoBehaviour
             Firebase.Auth.AuthResult result = task.Result;
             Debug.LogFormat("User signed in successfully: {0} ({1})",
                 result.User.DisplayName, result.User.UserId);
+
+            emailInput.text = "";
+            passwordInput.text = "";
         });
     }
 }

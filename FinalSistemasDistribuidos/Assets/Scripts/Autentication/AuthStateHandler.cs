@@ -1,6 +1,7 @@
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
+using JetBrains.Annotations;
 using System;
 using UnityEngine;
 using UnityEngine.SocialPlatforms.Impl;
@@ -65,16 +66,14 @@ public class AuthStateHandler : MonoBehaviour
                 {
                     DataSnapshot snapshot = task.Result;
                     string username = snapshot.Value.ToString();
-                    PlayerPrefs.SetString("username", username);
                     mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(username);
-
                     GetCharacterModel(userId);
                 }
           });
 
     }
 
-    private void GetCharacterModel(string userID)
+    public void GetCharacterModel(string userID)
     {
         FirebaseDatabase.DefaultInstance.RootReference
         .Child("users")
@@ -85,7 +84,7 @@ public class AuthStateHandler : MonoBehaviour
                 DataSnapshot snapshot = task.Result;
                 string characterId = snapshot.Child("characterId").Value.ToString();
                 GameObject characterPrefab = characterLibrary.GetCharacterPrefab(characterId);
-                Instantiate(characterPrefab, spawnPoint.position, Quaternion.identity);
+                Instantiate(characterPrefab, spawnPoint.position, new Quaternion(0, -0.39f, 0, 0.91f));
             }
         });
     }

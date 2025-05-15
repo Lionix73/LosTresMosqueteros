@@ -610,7 +610,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &112720961
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2073,8 +2073,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 70d4cab92ece01e4198817ae17bbcfe9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  panelAuth: {fileID: 112720960}
-  panelScore: {fileID: 1635950551}
+  panelLogin: {fileID: 0}
+  panelLobby: {fileID: 0}
   spawnPoint: {fileID: 1075111299}
 --- !u!4 &806077826
 Transform:

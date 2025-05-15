@@ -8,10 +8,13 @@ using UnityEngine.UI;
 
 public class ButtonRegister : MonoBehaviour
 {
-    FirebaseAuth auth;
-
+    [SerializeField] private GameObject registerPanel;
     [SerializeField] private Button registerButton;
-    private Coroutine _registerCoroutine;
+    [SerializeField] private TMP_InputField emailInput;
+    [SerializeField] private TMP_InputField usernameInput;
+    [SerializeField] private TMP_InputField passwordInput;
+
+    private string photoUrl = "https://pbs.twimg.com/profile_images/1864040171760427008/oP7sr5jA_400x400.jpg";
 
     private void Reset()
     {
@@ -20,15 +23,15 @@ public class ButtonRegister : MonoBehaviour
 
     public void HandleRegistrationButtonClick()
     {
-        string email = GameObject.Find("InputFieldMail").GetComponent<TMP_InputField>().text;
-        string password = GameObject.Find("InputFieldPassword").GetComponent<TMP_InputField>().text;
+        string email = emailInput.text;
+        string password = passwordInput.text;
 
         StartCoroutine(RegisterUser(email, password));
     }
 
     IEnumerator RegisterUser(string email, string password)
     {
-        string username = GameObject.Find("InputFieldUsername").GetComponent<TMP_InputField>().text;
+        string username = usernameInput.text;
         var auth = FirebaseAuth.DefaultInstance;
         var registerTask = auth.CreateUserWithEmailAndPasswordAsync(email, password);
 
@@ -43,14 +46,16 @@ public class ButtonRegister : MonoBehaviour
             AuthResult result = registerTask.Result;
             FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("username").SetValueAsync(username);
             FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("characterId").SetValueAsync("npc");
+            FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("level").SetValueAsync(1);
+            FirebaseDatabase.DefaultInstance.RootReference.Child("users").Child(result.User.UserId).Child("photoUrl").SetValueAsync(photoUrl);
 
             Debug.Log($"usuario creado: {result.User.DisplayName}, {result.User.UserId}");
+            registerPanel.SetActive(false);
         }
     }
 
     private void Start()
     {
-        auth = FirebaseAuth.DefaultInstance;
         registerButton.onClick.AddListener(HandleRegistrationButtonClick);
     }
 }
