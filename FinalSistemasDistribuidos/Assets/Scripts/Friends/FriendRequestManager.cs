@@ -12,6 +12,11 @@ public class FriendRequestManager : MonoBehaviour
 
     private string currentUserId;
 
+    private void Start()
+    {
+        LoadFriendRequests();
+    }
+
     private void OnEnable()
     {
         currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;

@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1063400626803830424
 RectTransform:
   m_ObjectHideFlags: 0
@@ -91,6 +91,7 @@ GameObject:
   - component: {fileID: 642532455056164329}
   - component: {fileID: 5312159627524947477}
   - component: {fileID: 1811239810150672578}
+  - component: {fileID: 9188634056257950750}
   m_Layer: 5
   m_Name: Nyx
   m_TagString: Untagged
@@ -198,7 +199,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 5312159627524947477}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 9188634056257950750}
+        m_TargetAssemblyTypeName: ChangeCharacterModel, Assembly-CSharp
+        m_MethodName: SelectCharacter
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &9188634056257950750
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1174109433323655672}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c804421053c20c4e8d4f1673809b770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &2106621535930375934
 GameObject:
   m_ObjectHideFlags: 0
@@ -211,6 +236,7 @@ GameObject:
   - component: {fileID: 5987578158127330479}
   - component: {fileID: 6778108062698478508}
   - component: {fileID: 7810488862461234002}
+  - component: {fileID: 8998722548857190109}
   m_Layer: 5
   m_Name: MrClean
   m_TagString: Untagged
@@ -318,7 +344,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 6778108062698478508}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 8998722548857190109}
+        m_TargetAssemblyTypeName: ChangeCharacterModel, Assembly-CSharp
+        m_MethodName: SelectCharacter
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 2
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &8998722548857190109
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2106621535930375934}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c804421053c20c4e8d4f1673809b770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &4759879247268170166
 GameObject:
   m_ObjectHideFlags: 0
@@ -331,6 +381,7 @@ GameObject:
   - component: {fileID: 3987632914149828007}
   - component: {fileID: 1392206980589511128}
   - component: {fileID: 7193823492612778714}
+  - component: {fileID: 538568466275344393}
   m_Layer: 5
   m_Name: Umbra
   m_TagString: Untagged
@@ -438,7 +489,31 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1392206980589511128}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls: []
+      m_Calls:
+      - m_Target: {fileID: 538568466275344393}
+        m_TargetAssemblyTypeName: ChangeCharacterModel, Assembly-CSharp
+        m_MethodName: SelectCharacter
+        m_Mode: 3
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 1
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
+--- !u!114 &538568466275344393
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4759879247268170166}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2c804421053c20c4e8d4f1673809b770, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &8738152347625066082
 GameObject:
   m_ObjectHideFlags: 0
@@ -452,7 +527,7 @@ GameObject:
   - component: {fileID: 8584518473233863557}
   - component: {fileID: 2133517685491504183}
   m_Layer: 5
-  m_Name: SignUpButton
+  m_Name: BackButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

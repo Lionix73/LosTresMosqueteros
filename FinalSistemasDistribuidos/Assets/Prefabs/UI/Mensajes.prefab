@@ -490,8 +490,8 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 1170776684404875918}
   m_HandleRect: {fileID: 6113279189366727178}
   m_Direction: 2
-  m_Value: 0
-  m_Size: 0.9999955
+  m_Value: 1
+  m_Size: 1
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -529,7 +529,7 @@ RectTransform:
   m_Father: {fileID: 4492604975789314650}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0.9999955}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -832,6 +832,7 @@ GameObject:
   - component: {fileID: 4508658606895031633}
   - component: {fileID: 6864597107165434775}
   - component: {fileID: 6029554380127987210}
+  - component: {fileID: 1459139703284297687}
   m_Layer: 5
   m_Name: Scroll View
   m_TagString: Untagged
@@ -929,6 +930,20 @@ MonoBehaviour:
   m_OnValueChanged:
     m_PersistentCalls:
       m_Calls: []
+--- !u!114 &1459139703284297687
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7052475266694591795}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ecc9461cc67feb146ad4edc3be0c098c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  friendRequestCardPrefab: {fileID: 4881715778212352664, guid: 082b7cf0233e20c41846b51c0f1fc096, type: 3}
+  contentParent: {fileID: 5625367680188066390}
 --- !u!1 &7256883228962800877
 GameObject:
   m_ObjectHideFlags: 0

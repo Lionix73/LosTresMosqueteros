@@ -1,21 +1,28 @@
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
-using System.Collections;
-using System.Collections.Generic;
-using Firebase;
-using Firebase.Database;
-using Firebase.Extensions;
-using UnityEngine.Networking;
 using Firebase.Auth;
+using Firebase.Database;
+using System.Collections.Generic;
+using UnityEngine.Networking;
+using UnityEngine.UI;
+using UnityEngine;
+using System.Collections;
+using Firebase.Extensions;
+using TMPro;
 
 public class UserListManager : MonoBehaviour
 {
+    [SerializeField] private bool showFriends = false;
+
     public GameObject userItemPrefab;
+    public GameObject friendItemPrefab;
     public Transform contentPanel;
+
+    private string currentUserId;
+    private HashSet<string> friendIds = new HashSet<string>();
+    private DatabaseReference dbRef;
 
     void OnEnable()
     {
+        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
         Invoke("LoadUserListFromFirebase", 1f);
     }
 
@@ -23,55 +30,109 @@ public class UserListManager : MonoBehaviour
     {
         foreach (Transform child in contentPanel)
         {
-            Destroy(child.gameObject); // Limpia el panel primero
+            Destroy(child.gameObject); // Limpiar el panel
         }
 
-        FirebaseDatabase.DefaultInstance.GetReference("users-online")
-            .GetValueAsync().ContinueWithOnMainThread(task =>
+        // Paso 1: Obtener lista de amigos
+        FirebaseDatabase.DefaultInstance.GetReference("users").Child(currentUserId).Child("friends")
+            .GetValueAsync().ContinueWithOnMainThread(friendsTask =>
             {
-                if (task.IsFaulted || task.IsCanceled)
+                if (friendsTask.IsCompleted && friendsTask.Result.Exists)
                 {
-                    Debug.LogError("Error cargando usuarios online: " + task.Exception);
-                    return;
-                }
+                    foreach (var friend in friendsTask.Result.Children)
+                    {
+                        friendIds.Add(friend.Key);
 
-                DataSnapshot snapshot = task.Result;
-
-                foreach (var child in snapshot.Children)
-                {
-                    string userId = child.Key;
-
-                    if (FirebaseAuth.DefaultInstance.CurrentUser.UserId == userId) continue;
-
-                    // Obtener los datos del usuario
-                    FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId)
-                        .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                        if(showFriends)
                         {
-                            if (userTask.IsFaulted || userTask.IsCanceled)
-                            {
-                                Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
-                                return;
-                            }
+                            DataSnapshot snapshot = friendsTask.Result;
 
-                            DataSnapshot userSnap = userTask.Result;
+                            foreach (var child in snapshot.Children)
+                        {
+                            string userId = child.Key;
 
-                            if (userSnap.Exists)
-                            {
-                                string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
-                                int level = userSnap.HasChild("level") ? int.Parse(userSnap.Child("level").Value.ToString()) : 1;
-                                string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
+                            if (userId == currentUserId) continue; // Saltar a uno mismo
 
-                                GameObject userItem = Instantiate(userItemPrefab, contentPanel);
-                                //userItem.transform.localScale = Vector3.one;
+                            // Paso 3: Cargar datos del usuario
+                            FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId)
+                                .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                                {
+                                    if (userTask.IsFaulted || userTask.IsCanceled)
+                                    {
+                                        Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
+                                        return;
+                                    }
 
-                                userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
-                                userItem.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Level " + level;
+                                    DataSnapshot userSnap = userTask.Result;
 
-                                if (!string.IsNullOrEmpty(photoUrl))
-                                    StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
-                            }
-                        });
+                                    if (userSnap.Exists)
+                                    {
+                                        string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
+                                        int level = userSnap.HasChild("level") ? int.Parse(userSnap.Child("level").Value.ToString()) : 1;
+                                        string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
+
+                                        GameObject userItem = Instantiate(friendItemPrefab, contentPanel);
+                                        userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
+                                        userItem.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Level " + level;
+
+                                        if (!string.IsNullOrEmpty(photoUrl))
+                                            StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
+                                    }
+                                });
+                        }
+                        }
+                    }
                 }
+
+                if(showFriends) return;
+
+                // Paso 2: Obtener usuarios online
+                FirebaseDatabase.DefaultInstance.GetReference("users-online")
+                    .GetValueAsync().ContinueWithOnMainThread(task =>
+                    {
+                        if (task.IsFaulted || task.IsCanceled)
+                        {
+                            Debug.LogError("Error cargando usuarios online: " + task.Exception);
+                            return;
+                        }
+
+                        DataSnapshot snapshot = task.Result;
+
+                        foreach (var child in snapshot.Children)
+                        {
+                            string userId = child.Key;
+
+                            if (userId == currentUserId) continue; // Saltar a uno mismo
+                            if (friendIds.Contains(userId)) continue; // Saltar si es amigo
+
+                            // Paso 3: Cargar datos del usuario
+                            FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId)
+                                .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                                {
+                                    if (userTask.IsFaulted || userTask.IsCanceled)
+                                    {
+                                        Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
+                                        return;
+                                    }
+
+                                    DataSnapshot userSnap = userTask.Result;
+
+                                    if (userSnap.Exists)
+                                    {
+                                        string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
+                                        int level = userSnap.HasChild("level") ? int.Parse(userSnap.Child("level").Value.ToString()) : 1;
+                                        string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
+
+                                        GameObject userItem = Instantiate(userItemPrefab, contentPanel);
+                                        userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
+                                        userItem.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Level " + level;
+
+                                        if (!string.IsNullOrEmpty(photoUrl))
+                                            StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
+                                    }
+                                });
+                        }
+                    });
             });
     }
 

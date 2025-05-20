@@ -1,16 +1,17 @@
-using UnityEngine;
-using Firebase.Database;
 using Firebase.Auth;
-using TMPro;
+using Firebase.Database;
 using System.Collections.Generic;
-using System.Collections;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using UnityEngine;
+using System.Collections;
+using Firebase.Extensions;
+using TMPro;
 
 public class FriendsDisplay : MonoBehaviour
 {
-    public Transform friendsContainer;
-    public GameObject friendCardPrefab;
+    public GameObject friendItemPrefab;
+    public Transform contentPanel;
 
     private DatabaseReference dbRef;
     private string currentUserId;
@@ -21,67 +22,63 @@ public class FriendsDisplay : MonoBehaviour
         currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
     }
 
-    public void ShowFriends()
+    void OnEnable()
     {
-        // Limpiar contenedor
-        foreach (Transform child in friendsContainer)
-            Destroy(child.gameObject);
-
-        // Leer la lista de amigos del usuario actual
-        dbRef.Child("users").Child(currentUserId).Child("friends").GetValueAsync().ContinueWith(task =>
-        {
-            if (task.IsCompleted && task.Result.Exists)
-            {
-                Dictionary<string, object> friendsDict = (Dictionary<string, object>)task.Result.Value;
-                List<string> onlineIds = new List<string>();
-
-                // Leer la lista de users-online
-                dbRef.Child("users-online").GetValueAsync().ContinueWith(onlineTask =>
-                {
-                    if (onlineTask.IsCompleted)
-                    {
-                        DataSnapshot onlineSnapshot = onlineTask.Result;
-                        foreach (var child in onlineSnapshot.Children)
-                            onlineIds.Add(child.Key);
-
-                        foreach (var friend in friendsDict)
-                        {
-                            string friendId = friend.Key;
-
-                            // Traer información del amigo
-                            dbRef.Child("users").Child(friendId).GetValueAsync().ContinueWith(userTask =>
-                            {
-                                if (userTask.IsFaulted || userTask.IsCanceled)
-                                {
-                                    Debug.LogWarning("Error cargando usuario " + friendId + ": " + userTask.Exception);
-                                    return;
-                                }
-
-                                DataSnapshot userSnap = userTask.Result;
-
-                                if (userSnap.Exists)
-                                {
-                                    string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
-                                    int level = userSnap.HasChild("level") ? int.Parse(userSnap.Child("level").Value.ToString()) : 1;
-                                    string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
-
-                                    GameObject userItem = Instantiate(friendCardPrefab, friendsContainer);
-                                    //userItem.transform.localScale = Vector3.one;
-
-                                    userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
-                                    userItem.transform.Find("Level").GetComponent<TextMeshProUGUI>().text = "Level " + level;
-
-                                    if (!string.IsNullOrEmpty(photoUrl))
-                                        StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
-                                }
-                            });
-                        }
-                    }
-                });
-            }
-        });
+        Invoke("ShowFriends", 1f);
     }
 
+    public void ShowFriends()
+    {
+        foreach (Transform child in contentPanel)
+        {
+            Destroy(child.gameObject); // Limpiar el panel
+        }
+
+        // Paso 1: Obtener lista de amigos
+        FirebaseDatabase.DefaultInstance.GetReference("users").Child(currentUserId).Child("friends")
+            .GetValueAsync().ContinueWithOnMainThread(friendsTask =>
+            {
+                if (friendsTask.IsCompleted && friendsTask.Result.Exists)
+                {
+                    foreach (var friend in friendsTask.Result.Children)
+                    {
+                            DataSnapshot snapshot = friendsTask.Result;
+
+                            foreach (var child in snapshot.Children)
+                            {
+                                string userId = child.Key;
+
+                                if (userId == currentUserId) continue; // Saltar a uno mismo
+
+                                // Paso 3: Cargar datos del usuario
+                                FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId)
+                                    .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                                    {
+                                        if (userTask.IsFaulted || userTask.IsCanceled)
+                                        {
+                                            Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
+                                            return;
+                                        }
+
+                                        DataSnapshot userSnap = userTask.Result;
+
+                                        if (userSnap.Exists)
+                                        {
+                                            string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
+                                            string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
+
+                                            GameObject userItem = Instantiate(friendItemPrefab, contentPanel);
+                                            userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
+
+                                            if (!string.IsNullOrEmpty(photoUrl))
+                                                StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
+                                        }
+                                    });
+                        }
+                    }
+                }
+            });
+    }
     IEnumerator LoadImage(string url, RawImage img)
     {
         UnityWebRequest request = UnityWebRequestTexture.GetTexture(url);

@@ -66,12 +66,37 @@ public class AuthStateHandler : MonoBehaviour
                 {
                     DataSnapshot snapshot = task.Result;
                     string username = snapshot.Value.ToString();
-
+                    
                     mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(username);
                     GetCharacterModel(userId);
+
+                    FirebaseUser user = FirebaseAuth.DefaultInstance.CurrentUser;
+
+                    if (user != null)
+                    {
+                        Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
+                        {
+                            DisplayName = username
+                        };
+
+                        user.UpdateUserProfileAsync(profile).ContinueWith(task =>
+                        {
+                            if (task.IsCanceled)
+                            {
+                                Debug.LogError("UpdateUserProfileAsync fue cancelado.");
+                                return;
+                            }
+                            if (task.IsFaulted)
+                            {
+                                Debug.LogError("Error al actualizar el perfil: " + task.Exception);
+                                return;
+                            }
+
+                            Debug.Log("Nombre actualizado exitosamente a: " + FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
+                        });
+                    }
                 }
           });
-
     }
 
     public void GetCharacterModel(string userID)
