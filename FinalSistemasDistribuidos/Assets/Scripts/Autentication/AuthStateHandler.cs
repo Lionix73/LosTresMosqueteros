@@ -11,6 +11,7 @@ public class AuthStateHandler : MonoBehaviour
     [SerializeField] GameObject panelLogin;
     [SerializeField] GameObject panelLobby;
     [SerializeField] Transform spawnPoint;
+    [SerializeField] private Transform charactersInGame;
     private CharacterLibrary characterLibrary;
 
     private void Reset()
@@ -46,7 +47,7 @@ public class AuthStateHandler : MonoBehaviour
     {
         panelLogin.SetActive(false);
         panelLobby.SetActive(true);
-        Debug.Log($"{FirebaseAuth.DefaultInstance.CurrentUser.Email}");
+        //Debug.Log($"{FirebaseAuth.DefaultInstance.CurrentUser.Email}");
     }
 
     private void SetUserOnline()
@@ -92,7 +93,7 @@ public class AuthStateHandler : MonoBehaviour
                                 return;
                             }
 
-                            Debug.Log("Nombre actualizado exitosamente a: " + FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
+                            //Debug.Log("Nombre actualizado exitosamente a: " + FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
                         });
                     }
                 }
@@ -110,7 +111,7 @@ public class AuthStateHandler : MonoBehaviour
                 DataSnapshot snapshot = task.Result;
                 string characterId = snapshot.Child("characterId").Value.ToString();
                 GameObject characterPrefab = characterLibrary.GetCharacterPrefab(characterId);
-                Instantiate(characterPrefab, spawnPoint.position, new Quaternion(0, -0.39f, 0, 0.91f));
+                Instantiate(characterPrefab, spawnPoint.position, new Quaternion(0, -0.39f, 0, 0.91f), charactersInGame);
             }
         });
     }

@@ -14,16 +14,18 @@ public class SquadInviteListener : MonoBehaviour
     private DatabaseReference dbRef;
     private FirebaseUser currentUser;
     private DatabaseReference invitesRef;
+    private LobbyVisualizer lobbyVisualizer;
 
     void Start()
     {
         currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
+        lobbyVisualizer = FindFirstObjectByType<LobbyVisualizer>();
     }
 
     private void OnEnable()
     {
-        ListenForSquadInvites();
+        Invoke("ListenForSquadInvites", 1f);
     }
 
     void ListenForSquadInvites()
@@ -81,6 +83,7 @@ public class SquadInviteListener : MonoBehaviour
             {
                 Debug.Log("Te uniste al lobby: " + lobbyId);
                 RemoveInvite(senderId, card);
+                lobbyVisualizer.VisualizeLobby(lobbyId);
             }
             else
             {

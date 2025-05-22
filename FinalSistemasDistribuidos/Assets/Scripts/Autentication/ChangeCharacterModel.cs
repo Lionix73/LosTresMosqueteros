@@ -43,8 +43,12 @@ public class ChangeCharacterModel : MonoBehaviour
 
     private void ChangeModel()
     {
-        GameObject model = GameObject.FindGameObjectWithTag("Player");
-        Destroy(model);
+        GameObject[] models = GameObject.FindGameObjectsWithTag("Player");
+
+        foreach (GameObject m in models)
+        {
+            Destroy(m);
+        }
 
         authHandler.GetCharacterModel(userId);
     }

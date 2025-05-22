@@ -57,11 +57,10 @@ public class ButtonLogin : MonoBehaviour
             popUpMsg = "¡HURRA! Te has registrado exitosamente";
 
             AuthResult result = task.Result;
-            Debug.LogFormat("User signed in successfully: {0} ({1})",
-                result.User.DisplayName, result.User.UserId);
+            //Debug.LogFormat("User signed in successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
 
-            emailInput.text = "";
             passwordInput.text = "";
+            emailInput.text = "";
         });
     }
 

@@ -21,7 +21,7 @@ public class UsersOnline : MonoBehaviour
         }
 
         DataSnapshot snapshot = args.Snapshot;
-        Debug.Log(snapshot.Value + " se ha conectado");
+        //Debug.Log(snapshot.Value + " se ha conectado");
     }
 
     private void HandleChildRemoved(object sender, ChildChangedEventArgs args)

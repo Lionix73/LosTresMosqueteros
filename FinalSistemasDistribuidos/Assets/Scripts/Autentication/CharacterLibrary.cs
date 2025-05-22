@@ -12,7 +12,14 @@ public class CharacterLibrary : MonoBehaviour
         characterDict = new Dictionary<string, GameObject>();
         foreach (var entry in characters)
         {
-            characterDict.Add(entry.characterId, entry.prefab);
+            if (!characterDict.ContainsKey(entry.characterId))
+            {
+                characterDict.Add(entry.characterId, entry.prefab);
+            }
+            else
+            {
+                Debug.LogWarning($"Duplicate characterId found in CharacterLibrary: {entry.characterId}");
+            }
         }
     }
 
