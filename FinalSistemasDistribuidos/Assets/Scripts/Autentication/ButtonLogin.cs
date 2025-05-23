@@ -32,8 +32,6 @@ public class ButtonLogin : MonoBehaviour
         string email = emailInput.text;
         string password = passwordInput.text;
 
-        // TODO: Verificar que en todos los input fields haya algo
-
         auth.SignInWithEmailAndPasswordAsync(email, password).ContinueWith(task => {
             if (task.IsCanceled)
             {
@@ -54,27 +52,31 @@ public class ButtonLogin : MonoBehaviour
             }
 
             fail = false;
-            popUpMsg = "¡HURRA! Te has registrado exitosamente";
+            popUpMsg = "¡HURRA! Te has loggeado exitosamente";
 
             AuthResult result = task.Result;
-            //Debug.LogFormat("User signed in successfully: {0} ({1})", result.User.DisplayName, result.User.UserId);
-
-            passwordInput.text = "";
-            emailInput.text = "";
         });
     }
 
     public void ShowPopUp()
     {
-        if(fail) 
-        { 
-            popUpFail.GetComponentInChildren<TextMeshProUGUI>().text = popUpMsg;
+        Invoke("ActivatePopUps", 0.5f);
+    }
+
+    private void ActivatePopUps()
+    {
+        if (fail)
+        {
             popUpFail.SetActive(true);
+            popUpFail.GetComponentInChildren<TextMeshProUGUI>().text = popUpMsg;
         }
         else
         {
-            popUpSuccess.GetComponentInChildren<TextMeshProUGUI>().text = popUpMsg;
             popUpSuccess.SetActive(true);
+            popUpSuccess.GetComponentInChildren<TextMeshProUGUI>().text = popUpMsg;
+
+            passwordInput.text = "";
+            emailInput.text = "";
         }
     }
 }

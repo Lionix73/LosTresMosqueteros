@@ -74,22 +74,27 @@ public class SquadInviteListener : MonoBehaviour
     {
         string userId = currentUser.UserId;
 
+        FirebaseDatabase.DefaultInstance
+            .GetReference("users")
+            .Child(userId).Child("currentLobby")
+            .SetValueAsync(lobbyId);
+
         dbRef.Child("lobbies").Child(lobbyId)
             .Child("members").Child(userId)
             .SetValueAsync(FirebaseAuth.DefaultInstance.CurrentUser.DisplayName)
             .ContinueWithOnMainThread(task =>
-        {
-            if (task.IsCompleted)
             {
-                Debug.Log("Te uniste al lobby: " + lobbyId);
-                RemoveInvite(senderId, card);
-                lobbyVisualizer.VisualizeLobby(lobbyId);
-            }
-            else
-            {
-                Debug.LogError("Error al unirse al lobby: " + task.Exception);
-            }
-        });
+                if (task.IsCompleted)
+                {
+                    Debug.Log("Te uniste al lobby: " + lobbyId);
+                    RemoveInvite(senderId, card);
+                    lobbyVisualizer.VisualizeLobby(lobbyId);
+                }
+                else
+                {
+                    Debug.LogError("Error al unirse al lobby: " + task.Exception);
+                }
+            });
     }
 
     void RejectInvite(string senderId, GameObject card)

@@ -3,6 +3,8 @@ using Firebase.Database;
 using Firebase.Auth;
 using System;
 using TMPro;
+using System.Collections;
+using Firebase.Extensions;
 
 public class SquadInviteSender : MonoBehaviour
 {
@@ -47,27 +49,49 @@ public class SquadInviteSender : MonoBehaviour
     public void SendSquadInvite(string friendUserId)
     {
         string currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
-        string lobbyId = Guid.NewGuid().ToString(); // Generamos ID de lobby
-
-        // Creamos el lobby con el host
-        DatabaseReference lobbyRef = FirebaseDatabase.DefaultInstance.GetReference("lobbies").Child(lobbyId);
-        lobbyRef.Child("host").SetValueAsync(currentUserId);
-        lobbyRef.Child("members").Child(currentUserId).SetValueAsync(FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
-
-        // Guardamos la invitación en el nodo del usuario receptor
-        DatabaseReference inviteRef = FirebaseDatabase.DefaultInstance
+        DatabaseReference userLobbyRef = FirebaseDatabase.DefaultInstance
             .GetReference("users")
-            .Child(friendUserId)
-            .Child("invitations")
-            .Child(currentUserId);
+            .Child(currentUserId)
+            .Child("currentLobby");
 
-        inviteRef.Child("lobbyId").SetValueAsync(lobbyId);
-        inviteRef.Child("username").SetValueAsync(FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
-        inviteRef.Child("timestamp").SetValueAsync(ServerValue.Timestamp);
+        // Verificamos si el usuario ya tiene un lobby activo
+        userLobbyRef.GetValueAsync().ContinueWithOnMainThread(task =>
+        {
+            if (task.IsFaulted)
+            {
+                Debug.LogError("Error al obtener currentLobby del usuario.");
+                return;
+            }
 
-        // Guardamos nuestro estado de lobby también
-        FirebaseDatabase.DefaultInstance.GetReference("users").Child(currentUserId).Child("currentLobby").SetValueAsync(lobbyId);
+            string existingLobbyId = task.Result.Exists ? task.Result.Value.ToString() : null;
+            string lobbyIdToUse = existingLobbyId;
 
-        Debug.Log("Invitación enviada a lobby: " + lobbyId);
+            if (string.IsNullOrEmpty(existingLobbyId))
+            {
+                // Crear nuevo lobby
+                lobbyIdToUse = Guid.NewGuid().ToString();
+                DatabaseReference newLobbyRef = FirebaseDatabase.DefaultInstance.GetReference("lobbies").Child(lobbyIdToUse);
+
+                newLobbyRef.Child("host").SetValueAsync(currentUserId);
+                newLobbyRef.Child("members").Child(currentUserId).SetValueAsync(FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
+
+                // Actualizar currentLobby del usuario
+                userLobbyRef.SetValueAsync(lobbyIdToUse);
+            }
+
+            // Guardar invitación para el amigo
+            DatabaseReference inviteRef = FirebaseDatabase.DefaultInstance
+                .GetReference("users")
+                .Child(friendUserId)
+                .Child("invitations")
+                .Child(currentUserId);
+
+            inviteRef.Child("lobbyId").SetValueAsync(lobbyIdToUse);
+            inviteRef.Child("username").SetValueAsync(FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
+            inviteRef.Child("timestamp").SetValueAsync(ServerValue.Timestamp);
+
+            Debug.Log("Invitación enviada al lobby: " + lobbyIdToUse);
+        });
     }
+
 }

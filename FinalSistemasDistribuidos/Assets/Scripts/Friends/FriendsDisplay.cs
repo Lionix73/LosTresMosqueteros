@@ -19,7 +19,6 @@ public class FriendsDisplay : MonoBehaviour
     void Start()
     {
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
-        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
     }
 
     void OnEnable()
@@ -29,9 +28,11 @@ public class FriendsDisplay : MonoBehaviour
 
     public void ShowFriends()
     {
+        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
+
         foreach (Transform child in contentPanel)
         {
-            Destroy(child.gameObject); // Limpiar el panel
+            Destroy(child.gameObject);
         }
 
         // Paso 1: Obtener lista de amigos
@@ -42,38 +43,39 @@ public class FriendsDisplay : MonoBehaviour
                 {
                     foreach (var friend in friendsTask.Result.Children)
                     {
-                            DataSnapshot snapshot = friendsTask.Result;
+                        DataSnapshot snapshot = friendsTask.Result;
 
-                            foreach (var child in snapshot.Children)
-                            {
-                                string userId = child.Key;
+                        foreach (var child in snapshot.Children)
+                        {
+                            string userId = child.Key;
 
-                                if (userId == currentUserId) continue; // Saltar a uno mismo
+                            if (userId == currentUserId) continue; // Saltar a uno mismo
 
-                                // Paso 3: Cargar datos del usuario
-                                FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId)
-                                    .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                            // Paso 3: Cargar datos del usuario
+                            FirebaseDatabase.DefaultInstance
+                                .GetReference("users").Child(userId)
+                                .GetValueAsync().ContinueWithOnMainThread(userTask =>
+                                {
+                                    if (userTask.IsFaulted || userTask.IsCanceled)
                                     {
-                                        if (userTask.IsFaulted || userTask.IsCanceled)
-                                        {
-                                            Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
-                                            return;
-                                        }
+                                        Debug.LogWarning("Error cargando usuario " + userId + ": " + userTask.Exception);
+                                        return;
+                                    }
 
-                                        DataSnapshot userSnap = userTask.Result;
+                                    DataSnapshot userSnap = userTask.Result;
 
-                                        if (userSnap.Exists)
-                                        {
-                                            string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
-                                            string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
+                                    if (userSnap.Exists)
+                                    {
+                                        string username = userSnap.Child("username").Value?.ToString() ?? "Desconocido";
+                                        string photoUrl = userSnap.HasChild("photoUrl") ? userSnap.Child("photoUrl").Value.ToString() : "";
 
-                                            GameObject userItem = Instantiate(friendItemPrefab, contentPanel);
-                                            userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
+                                        GameObject userItem = Instantiate(friendItemPrefab, contentPanel);
+                                        userItem.transform.Find("Username").GetComponent<TextMeshProUGUI>().text = username;
 
-                                            if (!string.IsNullOrEmpty(photoUrl))
-                                                StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
-                                        }
-                                    });
+                                        if (!string.IsNullOrEmpty(photoUrl))
+                                            StartCoroutine(LoadImage(photoUrl, userItem.transform.Find("ProfileImg").GetComponent<RawImage>()));
+                                    }
+                                });
                         }
                     }
                 }

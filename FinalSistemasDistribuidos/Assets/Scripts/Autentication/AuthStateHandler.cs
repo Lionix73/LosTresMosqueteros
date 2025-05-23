@@ -1,10 +1,10 @@
 using Firebase.Auth;
 using Firebase.Database;
 using Firebase.Extensions;
-using JetBrains.Annotations;
 using System;
+using System.Collections;
+using TMPro;
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class AuthStateHandler : MonoBehaviour
 {
@@ -12,6 +12,8 @@ public class AuthStateHandler : MonoBehaviour
     [SerializeField] GameObject panelLobby;
     [SerializeField] Transform spawnPoint;
     [SerializeField] private Transform charactersInGame;
+    [SerializeField] private GameObject PopUp;
+    [SerializeField] private LobbyStatusChecker lobbyStatus;
     private CharacterLibrary characterLibrary;
 
     private void Reset()
@@ -33,7 +35,7 @@ public class AuthStateHandler : MonoBehaviour
     {
         if(FirebaseAuth.DefaultInstance.CurrentUser != null)
         {
-            Invoke("SetAuth", 2f);
+            StartCoroutine(SetAuth());
             SetUserOnline();
         }
         else
@@ -43,11 +45,14 @@ public class AuthStateHandler : MonoBehaviour
         }
     }
 
-    private void SetAuth()
+    private IEnumerator SetAuth()
     {
+        PopUp.SetActive(true);
+        PopUp.GetComponentInChildren<TextMeshProUGUI>().text = "¡HURRA! Te has loggeado";
+        yield return new WaitForSeconds(2f);
         panelLogin.SetActive(false);
         panelLobby.SetActive(true);
-        //Debug.Log($"{FirebaseAuth.DefaultInstance.CurrentUser.Email}");
+        lobbyStatus.CheckIfInLobby();
     }
 
     private void SetUserOnline()
@@ -61,7 +66,7 @@ public class AuthStateHandler : MonoBehaviour
           {
                 if (task.IsFaulted)
                 {
-                // Handle the error...
+                    // Handle the error...
                 }
                 else if (task.IsCompleted)
                 {
@@ -75,7 +80,7 @@ public class AuthStateHandler : MonoBehaviour
 
                     if (user != null)
                     {
-                        Firebase.Auth.UserProfile profile = new Firebase.Auth.UserProfile
+                        UserProfile profile = new UserProfile
                         {
                             DisplayName = username
                         };
@@ -93,7 +98,7 @@ public class AuthStateHandler : MonoBehaviour
                                 return;
                             }
 
-                            //Debug.Log("Nombre actualizado exitosamente a: " + FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
+                            Debug.Log("Nombre actualizado exitosamente a: " + FirebaseAuth.DefaultInstance.CurrentUser.DisplayName);
                         });
                     }
                 }

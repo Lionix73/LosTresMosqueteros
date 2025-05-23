@@ -10,6 +10,7 @@ public class ButtonLogout : MonoBehaviour, IPointerClickHandler
         var mDatabaseRef = FirebaseDatabase.DefaultInstance.RootReference;
         var userId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
         //mDatabaseRef.Child("users-online").Child(userId).SetValueAsync(null);
+        //FirebaseDatabase.DefaultInstance.GetReference("users").Child(userId).Child("currentLobby").SetValueAsync(null);
 
         FirebaseAuth.DefaultInstance.SignOut();
 
