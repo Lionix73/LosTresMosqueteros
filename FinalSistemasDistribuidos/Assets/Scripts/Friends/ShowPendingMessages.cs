@@ -4,13 +4,14 @@ using UnityEngine;
 public class ShowPendingMessages : MonoBehaviour
 {
     [SerializeField] private Transform messageContainer;
-    [SerializeField] private GameObject notificacion;
+    [SerializeField] private GameObject notification;
+    [SerializeField] private GameObject emptyMailbox;
 
     private TextMeshProUGUI textNoti;
 
     private void Start()
     {
-        textNoti = notificacion.GetComponentInChildren<TextMeshProUGUI>();    
+        textNoti = notification.GetComponentInChildren<TextMeshProUGUI>();    
     }
 
     private void Update()
@@ -23,9 +24,14 @@ public class ShowPendingMessages : MonoBehaviour
 
             if(amountNotis > 0)
             {
-                notificacion.SetActive(true);
+                emptyMailbox.SetActive(false);
+                notification.SetActive(true);
             }
-            else { notificacion.SetActive(false); }
+            else 
+            {
+                notification.SetActive(false);
+                emptyMailbox.SetActive(true);
+            }
         }
     }
 }

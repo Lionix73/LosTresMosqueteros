@@ -10,6 +10,13 @@ public class SquadInviteSender : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI usernameText;
 
+    //private GameObject popUpInvitation;
+
+    //private void Start()
+    //{
+    //    popUpInvitation = FindFirstObjectByType<Popup>(FindObjectsInactive.Include).transform.Find("PopUpInvitation").gameObject;
+    //}
+
     public void SearchFriendID()
     {
         string targetFriendName = usernameText.text;
@@ -91,6 +98,8 @@ public class SquadInviteSender : MonoBehaviour
             inviteRef.Child("timestamp").SetValueAsync(ServerValue.Timestamp);
 
             Debug.Log("Invitación enviada al lobby: " + lobbyIdToUse);
+            //popUpInvitation.SetActive(true);
+            //popUpInvitation.GetComponentInChildren<TextMeshProUGUI>().text = "Invitación enviada";
         });
     }
 

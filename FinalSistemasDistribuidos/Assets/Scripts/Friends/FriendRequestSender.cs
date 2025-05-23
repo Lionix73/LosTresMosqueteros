@@ -9,11 +9,13 @@ public class FriendRequestSender : MonoBehaviour
     [SerializeField] private TextMeshProUGUI usernameText;
     private DatabaseReference dbRef;
     private FirebaseAuth auth;
+    //private GameObject popUpInvitation;
 
     private void Start()
     {
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
         auth = FirebaseAuth.DefaultInstance;
+        //popUpInvitation = GameObject.Find("PopUpInvitation");
     }
 
     public void SendFriendRequest()
@@ -70,6 +72,8 @@ public class FriendRequestSender : MonoBehaviour
                                  if (setTask.IsCompleted)
                                  {
                                      Debug.Log("Solicitud de amistad enviada a " + targetUsername);
+                                     //popUpInvitation.SetActive(true);
+                                     //popUpInvitation.GetComponentInChildren<TextMeshProUGUI>().text = "Solicitud de amistad enviada a " + targetUsername;
                                  }
                                  else
                                  {

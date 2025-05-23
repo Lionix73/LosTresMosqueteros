@@ -18,18 +18,14 @@ public class SquadInviteListener : MonoBehaviour
 
     void Start()
     {
-        currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         dbRef = FirebaseDatabase.DefaultInstance.RootReference;
         lobbyVisualizer = FindFirstObjectByType<LobbyVisualizer>();
-    }
-
-    private void OnEnable()
-    {
-        Invoke("ListenForSquadInvites", 1f);
+        InvokeRepeating("ListenForSquadInvites", 1f, 2f);
     }
 
     void ListenForSquadInvites()
     {
+        currentUser = FirebaseAuth.DefaultInstance.CurrentUser;
         invitesRef = dbRef.Child("users").Child(currentUser.UserId).Child("invitations");
         invitesRef.ChildAdded += HandleNewSquadInvite;
     }

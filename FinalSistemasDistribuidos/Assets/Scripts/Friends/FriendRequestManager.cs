@@ -14,17 +14,12 @@ public class FriendRequestManager : MonoBehaviour
 
     private void Start()
     {
-        LoadFriendRequests();
-    }
-
-    private void OnEnable()
-    {
-        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
-        LoadFriendRequests();
+        InvokeRepeating("LoadFriendRequests", 1f, 2f);
     }
 
     private void LoadFriendRequests()
     {
+        currentUserId = FirebaseAuth.DefaultInstance.CurrentUser.UserId;
         FirebaseDatabase.DefaultInstance.GetReference("users")
             .Child(currentUserId)
             .Child("friendRequest")
