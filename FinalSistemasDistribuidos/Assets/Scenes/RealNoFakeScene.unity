@@ -994,7 +994,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5996282835091783038, guid: 6794fd0757353c4438400c51feaf3f59, type: 3}
       propertyPath: m_IsActive
-      value: 0
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8185220758596384076, guid: 6794fd0757353c4438400c51feaf3f59, type: 3}
       propertyPath: m_Pivot.x
@@ -2641,26 +2641,6 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1483197345}
-    - target: {fileID: 5900769839619445831, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 6
-      objectReference: {fileID: 0}
-    - target: {fileID: 5900769839619445831, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 5900769839619445831, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_Target
-      value: 
-      objectReference: {fileID: 1733586202}
-    - target: {fileID: 5900769839619445831, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 5900769839619445831, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[6].m_TargetAssemblyTypeName
-      value: UnityEngine.GameObject, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 7065470801718630194, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -2746,11 +2726,7 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
-    m_RemovedGameObjects:
-    - {fileID: 2073947404834754380, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-    - {fileID: 6919407805268839875, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-    - {fileID: 6008886652923814109, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
-    - {fileID: 2046263644175021385, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
+    m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 35a13ac315772bc4783d357e2ee530b5, type: 3}
